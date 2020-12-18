@@ -1,0 +1,16 @@
+-------------------------------------------------------------------------------
+Test set: com.parkit.parkingsystem.RegularCustomerTest
+-------------------------------------------------------------------------------
+Tests run: 3, Failures: 3, Errors: 0, Skipped: 0, Time elapsed: 0.002 s <<< FAILURE! - in com.parkit.parkingsystem.RegularCustomerTest
+VerifyRegularCustomerIsConsideredRegular  Time elapsed: 0 s  <<< FAILURE!
+org.opentest4j.AssertionFailedError: expected: <true> but was: <false>
+	at com.parkit.parkingsystem.RegularCustomerTest.VerifyRegularCustomerIsConsideredRegular(RegularCustomerTest.java:42)
+
+CalculateFareBikeRegularCustomerForAnHour  Time elapsed: 0 s  <<< FAILURE!
+org.opentest4j.AssertionFailedError: expected: <1.0> but was: <0.95>
+	at com.parkit.parkingsystem.RegularCustomerTest.CalculateFareBikeRegularCustomerForAnHour(RegularCustomerTest.java:70)
+
+CalculateFareCarRegularCustomerForAnHour  Time elapsed: 0 s  <<< FAILURE!
+org.opentest4j.AssertionFailedError: expected: <1.5> but was: <1.4249999999999998>
+	at com.parkit.parkingsystem.RegularCustomerTest.CalculateFareCarRegularCustomerForAnHour(RegularCustomerTest.java:56)
+
