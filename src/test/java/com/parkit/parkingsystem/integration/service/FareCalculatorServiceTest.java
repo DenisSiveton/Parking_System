@@ -31,7 +31,7 @@ public class FareCalculatorServiceTest {
     @Test
     public void calculateFareCar(){
         testInit(60, ParkingType.CAR);
-        fareCalculatorService.calculateFare(ticket);
+        fareCalculatorService.calculateFare(ticket, false);
         assertEquals(ticket.getPrice(), Fare.CAR_RATE_PER_HOUR);
     }
 
@@ -49,14 +49,14 @@ public class FareCalculatorServiceTest {
     @Test
     public void calculateFareBike(){
         testInit(60, ParkingType.BIKE);
-        fareCalculatorService.calculateFare(ticket);
+        fareCalculatorService.calculateFare(ticket, false);
         assertEquals(ticket.getPrice(), Fare.BIKE_RATE_PER_HOUR);
     }
 
     @Test
     public void calculateFareUnkownType(){
         testInit(60, null);
-        assertThrows(NullPointerException.class, () -> fareCalculatorService.calculateFare(ticket));
+        assertThrows(NullPointerException.class, () -> fareCalculatorService.calculateFare(ticket, false));
     }
 
     @Test
@@ -69,20 +69,20 @@ public class FareCalculatorServiceTest {
         ticket.setInTime(inTime);
         ticket.setOutTime(outTime);
         ticket.setParkingSpot(parkingSpot);
-        assertThrows(IllegalArgumentException.class, () -> fareCalculatorService.calculateFare(ticket));
+        assertThrows(IllegalArgumentException.class, () -> fareCalculatorService.calculateFare(ticket, false));
     }
 
     @Test
     public void calculateFareBikeWithLessThanOneHourParkingTime(){
         testInit(45, ParkingType.BIKE);
-        fareCalculatorService.calculateFare(ticket);
+        fareCalculatorService.calculateFare(ticket, false);
         assertEquals((0.75 * Fare.BIKE_RATE_PER_HOUR), ticket.getPrice() );
     }
 
     @Test
     public void calculateFareCarWithLessThanOneHourParkingTime(){
         testInit(45, ParkingType.CAR);
-        fareCalculatorService.calculateFare(ticket);
+        fareCalculatorService.calculateFare(ticket, false);
         assertEquals( (0.75 * Fare.CAR_RATE_PER_HOUR) , ticket.getPrice());
     }
 
@@ -96,21 +96,35 @@ public class FareCalculatorServiceTest {
         ticket.setInTime(inTime);
         ticket.setOutTime(outTime);
         ticket.setParkingSpot(parkingSpot);
-        fareCalculatorService.calculateFare(ticket);
+        fareCalculatorService.calculateFare(ticket, false);
         assertEquals( (24 * Fare.CAR_RATE_PER_HOUR) , ticket.getPrice());
     }
 
     @Test
     public void calculateFareCarWithLessThanThirtyMinutesParkingTime(){
         testInit(30, ParkingType.CAR);
-        fareCalculatorService.calculateFare(ticket);
+        fareCalculatorService.calculateFare(ticket, false);
         assertEquals((0 * Fare.CAR_RATE_PER_HOUR) , ticket.getPrice());
+    }
+
+    @Test
+    public void calculateFareCarWithMoreThanThirtyMinutesParkingTime(){
+        testInit(36, ParkingType.CAR); // --> cas negatif pour 1ere fonctionnalité pour CAR
+        fareCalculatorService.calculateFare(ticket, false); // test d'intégration car appel à plusieurs méthodes
+        assertEquals((0.6 * Fare.CAR_RATE_PER_HOUR), ticket.getPrice() );
     }
 
     @Test
     public void calculateFareBikeWithLessThanThirtyMinutesParkingTime(){
         testInit(30, ParkingType.BIKE); // --> faire des tests pour les cas négatifs
-        fareCalculatorService.calculateFare(ticket); // test d'intégration car appel à plusieurs méthodes
+        fareCalculatorService.calculateFare(ticket, false); // test d'intégration car appel à plusieurs méthodes
         assertEquals((0 * Fare.BIKE_RATE_PER_HOUR), ticket.getPrice() );
+    }
+
+    @Test
+    public void calculateFareBikeWithMoreThanThirtyMinutesParkingTime(){
+        testInit(36, ParkingType.BIKE); // --> cas negatif pour 1ere fonctionnalité pour BIKE
+        fareCalculatorService.calculateFare(ticket, false); // test d'intégration car appel à plusieurs méthodes
+        assertEquals((0.6 * Fare.BIKE_RATE_PER_HOUR), ticket.getPrice() );
     }
 }
