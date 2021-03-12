@@ -10,7 +10,7 @@
       </profile>
     </annotationProcessing>
     <bytecodeTargetLevel>
-      <module name="parking-system" target="1.8" />
+      <module name="parking-system" target="10" />
     </bytecodeTargetLevel>
   </component>
 </project>

@@ -5,7 +5,7 @@ import com.parkit.parkingsystem.model.Ticket;
 
 public class FareCalculatorService {
 
-    public void calculateFare(Ticket ticket){
+    public void calculateFare(Ticket ticket, boolean isCustomerRegular){
         if( (ticket.getOutTime() == null) || (ticket.getOutTime().before(ticket.getInTime())) ){
             throw new IllegalArgumentException("Out time provided is incorrect:"+ticket.getOutTime().toString());
         }
@@ -13,13 +13,15 @@ public class FareCalculatorService {
 
         applyFareRate(ticket, parkingTimeDuration);
 
-        checkIfCustomerIsARegular(ticket);
+        checkIfCustomerIsARegular(ticket, isCustomerRegular);
+
+        roundToTheHundredth(ticket);
     }
 
     public void applyFareRate(Ticket ticket, double parkingTimeDuration) {
         //Verify that parking time duration is less than or equal to 30 minutes (0.5 hour)
         if(parkingTimeDuration * 60 <= 30) {
-            ticket.setPrice(0);
+            ticket.setPrice(0.0);
         }
         else {
             switch (ticket.getParkingSpot().getParkingType()) {
@@ -34,30 +36,37 @@ public class FareCalculatorService {
                 default:
                     throw new IllegalArgumentException("Unkown Parking Type");
             }
+
         }
     }
 
+    private void roundToTheHundredth(Ticket ticket) {
+        if (ticket.getPrice() > 0) {
+            ticket.setPrice((double) Math.round(ticket.getPrice() * 100) / 100);
+        }
+
+
+    }
+
     private double calculateParkingDuration(Ticket ticket){
-        double inMinute = ticket.getInTime().getTime()/(60*1000);
-        double outMinute = ticket.getOutTime().getTime()/(60*1000);
+        double millisecondsToMinute = 60000;
+        double inMinute = ticket.getInTime().getTime() / millisecondsToMinute;
+        double outMinute = ticket.getOutTime().getTime() / millisecondsToMinute;
 
         //TODO: Some tests are failing here. Need to check if this logic is correct
         //Change int into double so that decimals wouldn't be lost which are the minutes.
-        double parkingTimeDuration = (outMinute - inMinute)/60;
 
-        return parkingTimeDuration;
+        return (outMinute - inMinute)/60;
     }
 
-    public static boolean checkIfCustomerIsARegular(Ticket ticket) {
-        boolean isCustomerRegular = false;
-        //look in DB if previous ticket had the same REGISTRATION_NUMBER
+    public boolean checkIfCustomerIsARegular(Ticket ticket, boolean isCustomerRegular) {
         if (isCustomerRegular) {
-            regularCustomerDiscount(ticket);
+            applyRegularCustomerDiscount(ticket);
         }
         return isCustomerRegular;
     }
 
-    public static void regularCustomerDiscount(Ticket ticket) {
+    private void applyRegularCustomerDiscount(Ticket ticket) {
         ticket.setPrice(ticket.getPrice() * 0.95);
     }
 }
